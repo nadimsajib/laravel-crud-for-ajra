@@ -31,7 +31,8 @@
         });
 
         /* When click New customer button */
-        $('#new-customer').click(function () {
+        $('#new-customer').click(function (ev) {
+            ev.preventDefault();
             $('#btn-save').val("create-customer");
             $('#customer').trigger("reset");
             $('#customerCrudModal').html("Add New Customer");
@@ -39,7 +40,8 @@
         });
 
         /* Edit customer */
-        $('body').on('click', '#edit-customer', function () {
+        $('body').on('click', '#edit-customer', function (ev) {
+            ev.preventDefault();
             var customer_id = $(this).data('id');
             $.get('customers/' + customer_id + '/edit', function (data) {
                 $('#customerCrudModal').html("Edit customer");
@@ -48,8 +50,36 @@
                 $('#crud-modal').modal('show');
                 $('#cust_id').val(data.id);
                 $('#name').val(data.name);
-                $('#email').val(data.email);
-                $('#address').val(data.address);
+                $('#country').val(data.country_id);
+                $.each(data.cities, function(key, value) {
+                    $('#city')
+                        .append($("<option></option>")
+                            .attr("value", value.id)
+                            .text(value.name));
+                });
+                $('#city').val(data.city_id);
+                $('#hidden_resume').val(data.resume);
+                var lang_skills = data.lang_skills.split(',');
+
+                console.log(lang_skills)
+                $("#skill_div").children(":input").each(function(){
+                    var value_name = $(this).attr('value');
+                    var skill_value = '';
+                    $.each(lang_skills, function( index, value ) {
+                        if(value_name == value){
+                            skill_value = value_name;
+                        }
+                    });
+                    if(skill_value == value_name){
+                        $(this).attr('checked','checked');
+                    }else{
+                        $(this).attr('checked',false);
+                    }
+
+                });
+                $('#datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
+                $('#datepicker').datepicker('setDate', new Date(data.date_of_birth));
+
             })
         });
         /* Show customer */
@@ -62,23 +92,25 @@
         $('body').on('click', '#delete-customer', function () {
             var customer_id = $(this).data("id");
             var token = $("meta[name='csrf-token']").attr("content");
-            confirm("Are You sure want to delete !");
 
-            $.ajax({
-                type: "DELETE",
-                url: "<?php echo URL::to('/') . '/customers/';?>" + customer_id,
-                data: {
-                    "id": customer_id,
-                    "_token": token,
-                },
-                success: function (data) {
-                    $('#msg').html('Customer entry deleted successfully');
-                    $("#customer_id_" + customer_id).remove();
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
+            var r = confirm("Are You sure want to delete !");
+            if (r == true) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "<?php echo URL::to('/') . '/customers/';?>" + customer_id,
+                    data: {
+                        "id": customer_id,
+                        "_token": token,
+                    },
+                    success: function (data) {
+                        $('#msg').html('Customer entry deleted successfully');
+                        $("#customer_id_" + customer_id).remove();
+                    },
+                    error: function (data) {
+                        console.log('Error:', data);
+                    }
+                });
+            }
         });
         $('#country').change(function(){
             var countryID = $(this).val();
@@ -191,7 +223,14 @@
                 }
             });*/
         });
+
     });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
 </script>
 </html>

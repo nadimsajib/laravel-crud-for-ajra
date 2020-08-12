@@ -29,13 +29,17 @@ class CustomerController extends Controller
     }
     public function formValidation(Request $request)
     {
-        $validator=$request->validate([
+        $rules = [
             'name' => 'required',
             'country_id' => 'required',
             'city_id' => 'required',
             'date_of_birth' => 'nullable|date_format:Y-m-d|before:today',
             'resume'   => 'required|mimes:doc,pdf,docx,zip'
-        ]);
+        ];
+        if ($request->cust_id) {
+            $rules['resume'] = '';
+        }
+        $r=$request->validate($rules);
         return response()->json(['message'=>'success']);
     }
 
@@ -57,14 +61,18 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $r=$request->validate([
-		'name' => 'required',
-		'country_id' => 'required',
-		'lang_skills' => 'required',
-		'city_id' => 'required',
-		'date_of_birth' => 'nullable|date_format:Y-m-d|before:today',
+        $rules = [
+            'name' => 'required',
+            'country_id' => 'required',
+            'lang_skills' => 'required',
+            'city_id' => 'required',
+            'date_of_birth' => 'nullable|date_format:Y-m-d|before:today',
             'resume'   => 'required|mimes:doc,pdf,docx,zip'
-		]);
+        ];
+        if ($request->cust_id) {
+            $rules['resume'] = '';
+        }
+        $r=$request->validate($rules);
 
 		$custId = $request->cust_id;
         if($request->file()) {
@@ -74,6 +82,9 @@ class CustomerController extends Controller
 
             //$request->name = time().'_'.$request->file->getClientOriginalName();
             $request->resume = '/' . $filePath;
+        }
+        if ($request->resume == '') {
+            $request->resume = $request->hidden_resume;
         }
 		Customer::updateOrCreate(
 		    ['id' => $custId],
@@ -112,7 +123,7 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $where = array('id' => $id);
-		$customer = Customer::where($where)->first();
+		$customer = Customer::where($where)->with('cities')->first();
 		return Response::json($customer);
     }
 
