@@ -9,4 +9,8 @@ Then run seed
 
 `php artisan db:seed`
 
-Then run the project
+Then run composer install
+
+`composer intall`
+
+then run the project 
