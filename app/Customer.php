@@ -11,4 +11,12 @@ class Customer extends Model
     {
         return $this->hasMany('App\City', 'id', 'city_id');
     }
+    public function country()
+    {
+        return $this->hasOne('App\Country', 'id', 'country_id');
+    }
+    public function city()
+    {
+        return $this->hasOne('App\City', 'id', 'city_id');
+    }
 }

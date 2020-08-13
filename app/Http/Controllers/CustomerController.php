@@ -111,6 +111,8 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
+        $where = array('id' => $id);
+        $customer = Customer::where($where)->with('cities')->first();
         return view('customers.show',compact('customer'));
     }
 

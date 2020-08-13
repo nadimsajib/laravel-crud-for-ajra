@@ -16,5 +16,6 @@ Route::get('/', function () {
 });
 Route::resource('customers','CustomerController');
 Route::get('customers/{id}/edit/','CustomerController@edit');
+Route::get('customers/{id}/show/','CustomerController@show');
 Route::get('get-city-list','CustomerController@getCityList');
 Route::post('verifydata', 'CustomerController@formValidation');

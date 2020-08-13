@@ -26,8 +26,10 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Email</th>
-            <th>Address</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Skills</th>
+            <th>Resume</th>
             <th width="280px">Action</th>
         </tr>
 
@@ -35,8 +37,10 @@
             <tr id="customer_id_{{ $val->id }}">
                 <td>{{ $val->id }}</td>
                 <td>{{ $val->name }}</td>
-                <td>{{ $val->email }}</td>
-                <td>{{ $val->address }}</td>
+                <td>{{$val->country->name }}</td>
+                <td>{{ $val->city->name }}</td>
+                <td>{{ str_replace("c_plus","c++",$val->lang_skills) }}</td>
+                <td><a href="{{URL::to('/')}}{{ $val->resume }}" target="_blank">Click to download resume</a></td>
                 <td>
                     <form action="{{ route('customers.destroy',$val->id) }}" method="POST">
                         <a class="btn btn-info" id="show-customer" data-toggle="modal" data-id="{{ $val->id }}">Show</a>
@@ -46,8 +50,6 @@
                         <a id="delete-customer" data-id="{{ $val->id }}"
                            class="btn btn-danger delete-user">Delete</a>
                     </form>
-                </td>
-                </form>
                 </td>
             </tr>
         @endforeach
@@ -165,29 +167,8 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-2 col-sm-2 col-md-2"></div>
-                        <div class="col-xs-10 col-sm-10 col-md-10 ">
-                            @if(isset($customer->name))
+                        <div class="col-xs-10 col-sm-10 col-md-10 " id="viewDiv">
 
-                                <table>
-                                    <tr>
-                                        <td><strong>Name:</strong></td>
-                                        <td>{{$customer->name}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Email:</strong></td>
-                                        <td>{{$customer->email}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Address:</strong></td>
-                                        <td>{{$customer->address}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="text-align: right "><a
-                                                    href="{{ route('customers.index') }}" class="btn btn-danger">OK</a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            @endif
                         </div>
                     </div>
                 </div>

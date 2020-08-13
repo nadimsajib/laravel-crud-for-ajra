@@ -60,8 +60,6 @@
                 $('#city').val(data.city_id);
                 $('#hidden_resume').val(data.resume);
                 var lang_skills = data.lang_skills.split(',');
-
-                console.log(lang_skills)
                 $("#skill_div").children(":input").each(function(){
                     var value_name = $(this).attr('value');
                     var skill_value = '';
@@ -83,8 +81,15 @@
             })
         });
         /* Show customer */
-        $('body').on('click', '#show-customer', function () {
+        $('body').on('click', '#show-customer', function (ev) {
+            ev.preventDefault();
+            var customer_id = $(this).data('id');
             $('#customerCrudModal-show').html("Customer Details");
+            $('#viewDiv').html("");
+            $.get('customers/' + customer_id + '/show', function (data) {
+                $('#viewDiv').html(data);
+            })
+
             $('#crud-modal-show').modal('show');
         });
 
@@ -146,7 +151,6 @@
                 $("#nameError").html("Please write a name");
             }
             $("#countryError").html("");
-            console.log($('#country'))
             if($('#country').val() == ''){
                 error++;
                 $("#countryError").show()
